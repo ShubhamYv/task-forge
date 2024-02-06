@@ -29,9 +29,6 @@ public class SubmissionController {
 	@Autowired
 	private UserService userService;
 
-//	@Autowired
-//	private TaskService taskService;
-
 	@PostMapping()
 	public ResponseEntity<Submission> submitTask(@RequestParam Long taskId,
 			@RequestParam String gitHubhLink,
