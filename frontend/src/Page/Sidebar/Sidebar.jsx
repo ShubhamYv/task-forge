@@ -2,6 +2,7 @@ import { Avatar, Button } from '@mui/material';
 import React, { useState } from 'react';
 import './Sidebar.css';
 import CreateNewTaskForm from '../Task/CreateTask';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const menu = [
   { name: "Home", value: "Home", role: ["ROLE_ADMIN", "ROLE_CUSTOMER"] },
@@ -15,6 +16,8 @@ const menu = [
 const role = "ROLE_ADMIN";
 
 const Sidebar = () => {
+  const location = useLocation()
+  const navigate = useNavigate()
   const [activeMenu, setActiveMenu] = useState("DONE");
   const [openCreateTaskModal, setOpenCreateTaskModal] = useState(false)
 
@@ -26,8 +29,17 @@ const Sidebar = () => {
   }
 
   const handleMenuChange = (item) => {
+    const updatedParams = new URLSearchParams(location.search)
     if (item.name === "Create New Task") {
       handleOpenCreateTaskModal()
+    } else if (item.name === "Home") {
+      updatedParams.delete("filter")
+      const queryString = updatedParams.toString();
+      const updatedPath = queryString ? `${location.pathname}?${queryString}` : location.pathname
+      navigate(updatedPath)
+    } else {
+      updatedParams.set("filter", item.value)
+      navigate(`${location.pathname}?${updatedParams.toString()}`)
     }
     setActiveMenu(item);
   };
@@ -51,7 +63,7 @@ const Sidebar = () => {
             <p
               key={item.value}
               className={`py-3 px-5 rounded-full text-center cursor-pointer
-             ${activeMenu === item.name ? "activeMenuItem" : "menuItem"}`}
+             ${activeMenu === item ? "activeMenuItem" : "menuItem"}`}
               onClick={() => handleMenuChange(item)}
             >
               {item.name}
